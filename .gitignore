@@ -1,0 +1,28 @@
+# Build artifacts
+*.o
+*.a
+*.so
+jerboa
+jerboa_tsan
+test/test_packet
+test/test_pqueue
+test/test_flow
+test/test_nodes
+test/*.asan
+
+# Editor / OS / local config
+*.swp
+*.swo
+.vscode/
+.idea/
+.DS_Store
+
+# Coverage / profiling
+*.gcda
+*.gcno
+*.gcov
+*.profraw
+*.profdata
+core
+core.*
+vgcore.*

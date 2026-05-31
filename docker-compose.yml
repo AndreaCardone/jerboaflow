@@ -1,0 +1,44 @@
+# Demo stack: jerboa + mosquitto.
+#
+# Builds the jerboa image from ./Dockerfile (with Lua + MQTT support),
+# starts a local mosquitto broker, and runs the MQTT round-trip flow
+# from docker/flow.conf (a port of examples/09_mqtt.conf).
+#
+# Usage:
+#   docker compose up --build
+#   docker compose logs -f jerboa
+#   docker compose down
+#
+# Notes:
+# - jerboa binds its Prometheus endpoint to 127.0.0.1 only, so scraping
+#   from a separate prometheus container does not work out of the box.
+#   To add prometheus, give it `network_mode: "service:jerboa"` so it
+#   shares jerboa's loopback, and scrape 127.0.0.1:9090.
+# - The mosquitto port is not published to the host on purpose; uncomment
+#   the `ports:` block below if you want to connect from outside.
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: jerboa-mosquitto
+    restart: unless-stopped
+    volumes:
+      - ./docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    # ports:
+    #   - "127.0.0.1:1883:1883"
+
+  jerboa:
+    build:
+      context: .
+      args:
+        WITH_LUA: "1"
+        WITH_MQTT: "1"
+    image: jerboa:latest
+    container_name: jerboa
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+    volumes:
+      - ./docker/flow.conf:/etc/jerboa/flow.conf:ro
+    # Metrics stay on loopback inside the container; publish only if you
+    # add a sidecar in the same network namespace (see note above).

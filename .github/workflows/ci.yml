@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        flags:
+          - ""
+          - "WITH_LUA=1"
+          - "WITH_MQTT=1"
+          - "WITH_LUA=1 WITH_MQTT=1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential valgrind \
+            liblua5.4-dev libmosquitto-dev
+
+      - name: Build
+        run: make jerboa ${{ matrix.flags }}
+
+      - name: Test
+        run: make test ${{ matrix.flags }}
+
+      - name: Valgrind
+        run: make test-valgrind ${{ matrix.flags }}
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential liblua5.4-dev libmosquitto-dev
+      - name: ASan + UBSan
+        run: make test-asan WITH_LUA=1 WITH_MQTT=1

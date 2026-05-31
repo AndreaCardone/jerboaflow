@@ -1,0 +1,20 @@
+# Keep the build context small and reproducible.
+.git
+.github
+.gitignore
+.vscode
+*.o
+*.a
+jerboa
+jerboa_tsan
+test/test_packet
+test/test_pqueue
+test/test_flow
+test/test_nodes
+test/*.asan
+docs/
+examples/
+*.md
+LICENSE
+flow.conf
+nodes_demo.conf
