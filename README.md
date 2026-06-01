@@ -42,7 +42,7 @@ and pthreads in the default build; Lua/MQTT/GPIO are opt-in.
 ## Quick start
 
 ```sh
-git clone <repo> jerboa
+git clone https://github.com/AndreaCardone/jerboaflow.git jerboa
 cd jerboa
 make jerboa
 ./jerboa examples/01_hello.conf
