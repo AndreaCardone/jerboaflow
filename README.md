@@ -1,9 +1,11 @@
-# jerboa
+# jerboaflow
 
 A minimal flow-based runtime in C11. Wire a directed graph of nodes in
 a plain-text config; the runtime schedules them across a fixed worker
 pool. ~4k LoC, two dozen built-in node types, BSD-2-Clause. Only libc
 and pthreads in the default build; Lua/MQTT/GPIO are opt-in.
+> For simplicity, the name jerboa is used throughout this repository
+> instead of jerboaflow.
 
 > Named after the [jerboa](https://en.wikipedia.org/wiki/Jerboa) — a
 > tiny, lightweight desert rodent that hops surprisingly fast for its
