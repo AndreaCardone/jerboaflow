@@ -209,12 +209,17 @@ int http_client_do(const HttpUrl *u,
         fprintf(stderr, "jerboa: %s: request header too large\n", who);
         close(fd); return -1;
     }
+
+    /* After write all shutdown(fd, SHUT_WR) is not needed because
+     * 1. We already wrote Connection: close in the header.
+     * 2. Many modern servers close connection if the connection is
+     *    half-closed by the client.
+     */
     if (http_io_write_all(fd, hdr, (size_t)hn) < 0 ||
         (body_len && http_io_write_all(fd, body, body_len) < 0)) {
         fprintf(stderr, "jerboa: %s: send: %s\n", who, strerror(errno));
         close(fd); return -1;
     }
-    shutdown(fd, SHUT_WR);
 
     char *buf = malloc(raw_cap);
     if (!buf) { close(fd); return -1; }
